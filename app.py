@@ -52,19 +52,24 @@ def create_store():
 @app.route("/stores")
 def show_stores():
     # Selects all the stores in the db
-    stores = Store.select()
+    return render_template("stores.html", stores=Store.select(Store).order_by(Store.id))
 
-    return render_template("stores.html", stores=stores)
+
+@app.route("/stores", methods=["POST"])
+def delete_store():
+    # Get the id of the store to be deleted
+    s = Store.get_by_id(request.form.get('store_id'))
+    if s.delete_instance(recursive=True):
+        flash("Successfully deleted")
+        return redirect(url_for('show_stores'))
+    return render_template("store.html", stores=Store.select(Store).order_by(Store.id))
 
 
 @app.route("/stores/<store_id>")
 def show_store(store_id):
     # Selects the store based on the ID provided
     store = Store.get_by_id(store_id)
-
-    # Counts the number of warehouses belonging to the selected store
-    count = Warehouse.select().where(Warehouse.store_id == int(store_id)).count()
-    return render_template("store_page.html", store=store, count=count)
+    return render_template("store_page.html", store=store)
 
 
 @app.route("/stores/<store_id>", methods=["POST"])
