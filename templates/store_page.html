@@ -5,11 +5,19 @@
 
   <h1>{{ store.name }}</h1>
 
-  <table class="table">
-    <tr>
-      <th>Number of warehouses</th>
-      <td>{{ count }}</td>
-    </tr>
-  </table>
+  <p class="font-weight-bold">
+    Number of warehouses
+  </p>
+  <p>
+    {{ count }}
+  </p>
+
+  <form method="POST">
+    <div class="form-group">
+      <label class="font-weight-bold">New store name</label>
+      <input class="form-control" type="text" name="new-name" value="{{store.name}}"/>
+      <button type="submit" class="btn btn-primary my-2">Edit Store Name</button>
+    </div>
+  </form>
 
 {% endblock %}
