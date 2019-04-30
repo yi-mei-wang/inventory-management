@@ -7,9 +7,11 @@
 <table class="table">
   <tr>
     <th>Store name</th>
+    <th>Warehouse count</th>
+    <th></th>
   </tr>
   
-  {% for store in store_info %}
+  {% for store in stores %}
   <tr>
     <td>
       <a href={{url_for('show_store', store_id=store.id)}}>
@@ -17,8 +19,11 @@
       </a>
     </td>
     <td>
-      <form>
-        <input name={{store.id}} class="d-none"/>
+    {{store.warehouses | length}}
+    </td>
+    <td>
+      <form action={{ url_for('delete_store') }} method="POST">
+        <input name="store_id" value={{store.id}} class="d-none"/>
         <button type="submit" class="btn btn-danger">Delete</button>
       </form>
     </td>
