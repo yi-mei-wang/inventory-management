@@ -53,8 +53,19 @@ def create_store():
 def show_stores():
     # Selects all the stores in the db
     stores = Store.select()
+    store_info = {}
+    for store in stores:
+        # Counts the number of warehouses belonging to the selected store
+        store_info[store.name] = Warehouse.select().where(
+            Warehouse.store_id == store.id).count()
 
-    return render_template("stores.html", stores=stores)
+    return render_template("stores.html", store_info=store_info)
+
+
+@app.route("/stores", methods=["POST"])
+def delete_store():
+    # Get the id of the store to be deleted
+    Store.delete().where()
 
 
 @app.route("/stores/<store_id>")

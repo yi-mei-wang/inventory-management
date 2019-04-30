@@ -9,12 +9,18 @@
     <th>Store name</th>
   </tr>
   
-  {% for store in stores %}
+  {% for store in store_info %}
   <tr>
     <td>
       <a href={{url_for('show_store', store_id=store.id)}}>
       {{store.name}}
       </a>
+    </td>
+    <td>
+      <form>
+        <input name={{store.id}} class="d-none"/>
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
     </td>
   </tr>
   {% endfor %}
