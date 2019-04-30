@@ -1,8 +1,12 @@
 import peeweedbevolve
-from flask import Flask, render_template, request
-from models import db
+from flask import Flask, flash, redirect, render_template, request, url_for
+from models import *
+import os
 
 app = Flask(__name__)
+# Ensure templates are auto-reloaded
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["SECRET_KEY"] = os.getenv('APP_SECRET_KEY')
 
 
 @app.before_request
@@ -16,9 +20,53 @@ def after_request(response):
     return response
 
 
+@app.cli.command()
+def migrate():
+    db.evolve(ignore_tables={'base_model'})
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/store")
+def store():
+    stores = Store.select()
+    return render_template("store.html", stores=stores)
+
+
+@app.route("/create_warehouse", methods=["POST"])
+def create():
+    # Get the chosen store by the user
+    chosen_store = Store.get_by_id(request.form.get('store_id'))
+    # Create a new warehouse using the chosen store
+    w = Warehouse(location=request.form['location'], store=chosen_store)
+
+    try:
+        if w.save():
+            flash("Successfully saved")
+            return redirect(url_for('store'))
+
+    except:
+        return render_template("store.html")
+
+
+@app.route("/stores")
+def stores():
+    # Selects all the stores in the db
+    stores = Store.select()
+
+    return render_template("stores.html", stores=stores)
+
+
+@app.route("/store/<store_id>")
+def show_store(store_id):
+    # Selects the store based on the ID provided
+    store = Store.get_by_id(store_id)
+    # Counts the number of warehouses belonging to the selected store
+    count = Warehouse.select().where(Warehouse.store_id == int(store_id)).count()
+    return render_template("store_page.html", store=store, count=count)
 
 
 if __name__ == 'main':

@@ -1,0 +1,23 @@
+{% extends "_layout.html" %} 
+
+{% block content %}
+
+<h1>STORES</h1>
+
+<table class="table">
+  <tr>
+    <th>Store name</th>
+  </tr>
+  
+  {% for store in stores %}
+  <tr>
+    <td>
+      <a href={{url_for('show_store', store_id=store.id)}}>
+      {{store.name}}
+      </a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}
