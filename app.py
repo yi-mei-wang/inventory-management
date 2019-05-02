@@ -30,23 +30,22 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/store-management", methods=["GET"])
+@app.route("/stores/new", methods=["GET"])
 def show_store_form():
     return render_template("store.html")
 
 
-@app.route("/store-management", methods=["POST"])
+@app.route("/stores/new", methods=["POST"])
 def create_store():
     # Create a new store using the chosen name
-    s = Store(name=request.form['name'])
+    name = request.form['name']
+    s = Store(name=name)
 
-    try:
-        if s.save():
-            flash("Successfully saved")
-            return redirect(url_for('show_store_form'))
+    if s.save():
+        flash("Successfully saved")
+        return redirect(url_for('show_store_form'))
 
-    except:
-        return render_template("store.html")
+    return render_template("store.html", name=name, errors=s.errors)
 
 
 @app.route("/stores")
@@ -77,7 +76,7 @@ def update_store(store_id):
     u = Store.update(name=request.form.get('new-name')
                      ).where(Store.id == store_id)
     if u.execute():
-        flash("Successfully")
+        flash("Successfully updated")
     return redirect(url_for('show_store', store_id=store_id))
 
 
